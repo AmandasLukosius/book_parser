@@ -69,5 +69,7 @@ book-parser/
 
 ## TODO:
 1. Make DockerFile more lightweight by using python alpine or slim package.
-2. Deploy containerized application using Kubernetes.
+2. Deploy containerized application using Kubernetes and make scheduling on kubernetes instead of using it in docker container.
 3. Application could be reworked to use small gRPC microservice dedicated to raw scraped data parsing.
+4. Implement logging.
+5. Write tests
