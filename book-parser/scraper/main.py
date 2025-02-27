@@ -10,7 +10,7 @@ from selectolax.parser import HTMLParser
 from helper import get_repo_dir, save_data
 
 BASE_URL = "https://books.toscrape.com/"
-BOOK_JSON = join(get_repo_dir(), 'book-parser', 'app', 'results', 'books.json')
+BOOK_JSON = join(get_repo_dir(), 'book-parser', 'results', 'books.json')
 
 
 @dataclass

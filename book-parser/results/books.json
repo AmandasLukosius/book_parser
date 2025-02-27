@@ -1,0 +1,11 @@
+{
+    "books": [
+        {
+            "name": "Charlie and the Chocolate Factory (Charlie Bucket #1)",
+            "availability": "In stock (1 available)",
+            "upc": "1774749f2cee292f",
+            "price_exc_tax": "\u00a322.85",
+            "tax": "\u00a30.00"
+        }
+    ]
+}
