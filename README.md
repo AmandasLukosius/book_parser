@@ -53,7 +53,7 @@ book-parser/
 │   ├── helper.py        # Helper functions for handling JSON data
 │   ├── main.py          # Main scraper script
 │
-├── cron/                # Cron jobs for automation
+├── cron                 # Cron jobs for automation
 ├── Dockerfile           # Docker setup for containerization
 ├── Poetry.lock          # Dependency lock file
 ├── pylintrc             # Pylint configuration file
