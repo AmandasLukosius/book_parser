@@ -23,8 +23,6 @@ Ensure you have Python 3.13.2 and Poetry 2.1.1 installed.
    poetry install
    ```
 
-Install the required dependencies:
-
 ### Dependencies used
 - `httpx` - For making HTTP requests.
 - `selectolax` - For parsing HTML content.
