@@ -1,11 +1,9 @@
-"""
-Helper functions
-"""
+"""Helper functions"""
 import json
 from pathlib import Path
 from rich import print as printf
 
-def get_repo_dir() -> str:
+def get_repo_dir() -> Path:
     """
     Returns base path of repository. We use this for path building.
 
@@ -14,32 +12,26 @@ def get_repo_dir() -> str:
     """
     return Path.cwd()
 
-def is_duplicate(upc, data):
+def is_duplicate(upc: str, data: dict) -> bool:
     """
     Checking if scraped book data already exists in books.json file
 
     Args:
-        upc (str): unique book id
-        data (dict): current book data stored in json
+        upc (str): Unique book ID
+        data (dict): Current book data stored in JSON
 
     Returns:
-        boolean: is duplicate or not
+        bool: True if duplicate, False otherwise
     """
-    duplicate = False
-    for book in data['books']:
-        if book['upc'] == upc:
-            duplicate = True
-            break
+    return any(book["upc"] == upc for book in data["books"])
 
-    return duplicate
-
-def save_data(new_book, filename):
+def save_data(new_book: object, filename: str):
     """
     Updating books to our current json file excluding duplicates
 
     Args:
-        new_book (obj): book object
-        filename (str): path to result json file
+        new_book (obj): Book object
+        filename (str): Path to JSON file
 
     """
     with open(filename,'r+', encoding='utf-8') as file:

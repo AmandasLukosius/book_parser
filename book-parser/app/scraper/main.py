@@ -9,13 +9,15 @@ import httpx
 from selectolax.parser import HTMLParser
 from helper import get_repo_dir, save_data
 
-
 BASE_URL = "https://books.toscrape.com/"
 BOOK_JSON = join(get_repo_dir(), 'book-parser', 'app', 'results', 'books.json')
 
 
 @dataclass
-class Book:     # pylint: disable=missing-class-docstring
+class Book:
+    """
+    Data structure representing book information.
+    """
     name: str
     availability: str
     upc: str
@@ -24,21 +26,24 @@ class Book:     # pylint: disable=missing-class-docstring
 
 
 @dataclass
-class Response:     # pylint: disable=missing-class-docstring
+class Response:
+    """
+    Data structure for holding parsed HTML content and next page information
+    """
     body_html: HTMLParser
     next_page: dict
 
 
-def get_page(client, url: str):
+def get_page(client: httpx.Client, url: str) -> Response:
     """
-    Returns parsed html content
+    Fetch and parse HTML content from a given URL.
 
     Args:
-        client (obj): httpx client
-        url (str): url to parse
+        client (httpx.Client): HTTP client for making requests
+        url (str): URL to fetch
 
     Returns:
-        reponse: parsed page data
+        reponse: Parsed HTML content and next page data
     """
     resp = client.get(url)
     data = HTMLParser(resp.text)
@@ -49,99 +54,101 @@ def get_page(client, url: str):
     return Response(body_html=data, next_page=next_page)
 
 
-def parse_links(html: str):
+def parse_links(html: HTMLParser) -> list[str]:
     """
     Extract all links of books on the page
 
     Args:
-        html (obj): html object
+        html (HTMLParser): Parsed HTML document
 
     Returns:
-        list: list of urls of books in one page
+        list: List of book URLs found on the page
     """
-    links = html.css("article.product_pod h3 a")
-    return [link.attrs["href"] for link in links]
+    return [link.attrs["href"] for link in html.css("article.product_pod h3 a")]
 
 
-def get_value(html, selector, index):
+def get_value(html: HTMLParser, selector: str, index: int) -> str:
     """
-    Selectings values from html
+    Extract a value from the HTML document based on a CSS selector
 
     Args:
-        html (obj): html document
-        selector (str): html selector
-        index (int): index of selector
+        html (HTMLParser): Parsed HTML document
+        selector (str): CSS selector to search for
+        index (int): Index of the selected element
 
     Returns:
-        boolean: parsed value
+        str: Extracted text or "none" if not found
     """
     try:
-        value = html.css(selector)[index].text(strip=True)
-        return value
-    except:     # pylint: disable=bare-except
+        return html.css(selector)[index].text(strip=True)
+    except IndexError:
         return "none"
 
 
-def generate_book_entry(html):
+def generate_book_entry(html: HTMLParser) -> Book:
     """
-    Function to return parsed book values
+    Create a book instance from parsed HTML
 
     Args:
-        html (obj): html document
+        html (HTMLParser): Parsed HTML document
 
     Returns:
-        object: filtered out required book data
+        Book: Extracted book information
     """
-    new_book = Book(
+    return Book(
         name = get_value(html, "h1", 0),
         availability = get_value(html, "table tbody tr td", 5),
         upc = get_value(html, "table tbody tr td", 0),
         price_exc_tax = get_value(html, "table tbody tr td", 3),
         tax = get_value(html, "table tbody tr td", 4),
     )
-    return new_book
 
 
-def validate_url(value):
+def validate_url(url: str) -> str:
     """
     Function to return parsed value from html
 
     Args:
-        value (str): html document
+        url (str): Relative or absolute book URL
 
     Returns:
-        str: filtered out required book data
+        str: Adjusted absolute URL
     """
-    if "catalogue" not in value:
-        return "catalogue/" + value
+    return f"catalogue/{url}" if "catalogue" not in url else url
 
-    return value
 
-async def get_data(client, url):
+async def get_data(client: httpx.AsyncClient, url: str):
     """
-    Async function to parse html and save data to json
+    Fetch and parse book data asynchronously.
+
+    Args:
+        client (httpx.AsyncClient): HTTP client for making asynchronous requests.
+        url (str): Book URL to fetch
     """
     resp = await client.get(url)
     html = HTMLParser(resp.text)
     save_data(new_book=generate_book_entry(html), filename=abspath(BOOK_JSON))
 
 
-async def parse_data(links):
+async def parse_data(links: list[str]):
     """
-    Async function to parse data from individual pages
+    Parse book data asynchronously from multiple URLs.
+
+    Args:
+        links (list[str]): List of book URLs to parse.
+
+    Returns:
+        list: List of completed async tasks.
     """
     async with httpx.AsyncClient() as client:
-        tasks = []
-        for link in links:
-            tasks.append(get_data(client, link))
-        return await asyncio.gather(*tasks)
+        return await asyncio.gather(*(get_data(client, link) for link in links))
 
 
 def main():
     """
-    Main logic to iterate through all links in every page.
+    Main function to iterate through all book pages and parse data.
     """
-    url = "https://books.toscrape.com/"
+    url = BASE_URL
     client = httpx.Client()
 
     while True:
@@ -149,11 +156,11 @@ def main():
         links = [BASE_URL + validate_url(link) for link in parse_links(data.body_html)]
         asyncio.run(parse_data(links))
 
-        if data.next_page["href"] is None:
+        if not data.next_page["href"]:
             client.close()
             break
-        next_page_url = validate_url(data.next_page["href"])
-        url = BASE_URL + str(next_page_url)
+
+        url = BASE_URL + validate_url(data.next_page["href"])
 
 
 if __name__ == "__main__":

@@ -1,16 +1,17 @@
 [project]
 name = "book-parser"
-version = "0.1.0"
+version = "0.2.0"
 description = "App to parse book information from https://books.toscrape.com"
 authors = [
     {name = "Amandas Lukosius",email = "amandas.lukosius@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.13.2"
+requires-python = "==3.13.2"
 dependencies = [
     "httpx (==0.28.1)",
     "selectolax (==0.3.28)",
-    "rich (>=13.9.4,<14.0.0)"
+    "rich (>=13.9.4,<14.0.0)",
+    "pylint (>=3.3.4,<4.0.0)"
 ]
 
 
