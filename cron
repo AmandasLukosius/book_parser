@@ -1,0 +1,1 @@
+* * * * * root cd /app && /opt/poetry-venv/bin/poetry install && /opt/poetry-venv/bin/poetry run python /app/book-parser/app/scraper/main.py >> /var/log/cron.log 2>&1
