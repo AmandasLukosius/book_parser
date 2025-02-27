@@ -8,27 +8,28 @@ A Python web scraper that extracts book data from [Books to Scrape](https://book
 - Saves extracted data into a JSON file.
 - Parses multiple pages automatically.
 
-## Requirements
+## Requirements and Installation
 
-Ensure you have Python 3.13.2 and Poetry 2.1.1 installed. Install the required dependencies:
-
-### Dependencies
-- `httpx` - For making HTTP requests.
-- `selectolax` - For parsing HTML content.
-- `asyncio` - For handling asynchronous requests.
-- `rich` - For better terminal output.
-
-## Installation
+Ensure you have Python 3.13.2 and Poetry 2.1.1 installed. 
 
 1. Clone the repository:
    ```sh
    git clone https://github.com/AmandasLukosius/book_parser.git
    cd book-scraper
    ```
+
 2. Install dependencies:
    ```sh
    poetry install
    ```
+
+Install the required dependencies:
+
+### Dependencies used
+- `httpx` - For making HTTP requests.
+- `selectolax` - For parsing HTML content.
+- `asyncio` - For handling asynchronous requests.
+- `rich` - For better terminal output.
 
 ## Usage
 
